@@ -1,22 +1,51 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { editNote, fetchNotes } from '../store/api/noteSlice';
 
-const EditNote = (props) => {
+const EditNote = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const [currentNote, setCurrentNote] = useState({});
+  
   const initialValues = {
-    title: props.initialValues.title,
-    content: props.initialValues.content,
+    title: currentNote.title,
+    content: currentNote.content
   };
 
+
+  const params = useParams();
+
+  const notes = useSelector((state) => state.note.notes);
+  // console.log("waa current Note" ,currentNote)
+ 
+  useEffect(() => {
+    dispatch(fetchNotes())
+  }, [dispatch])
+
+  useEffect(() => {
+    const note = notes.find((note) => note.id === Number(params.id))
+    if (note) {
+      setCurrentNote(note);
+    }
+  }, [notes, params.id])
+  
   const validationSchema = Yup.object({
     title: Yup.string().required('Title is required'),
     content: Yup.string().required('Content is required'),
   });
 
   const handleSubmit = (values, { resetForm }) => {
-    // Send the data to the server (localhost:9000/update_note)
-    console.log('Sending data:', values);
-    props.editNote(values);
+    dispatch(
+      editNote({
+      noteId: Number(params.id),
+      updatedNote: values
+    })
+    ).then(() => {
+      navigate("/")
+    });
 
     // Reset the form after submission
     resetForm();
