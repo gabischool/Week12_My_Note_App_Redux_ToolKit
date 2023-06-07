@@ -45,6 +45,7 @@ const EditNote = () => {
     })
     ).then(() => {
       navigate("/")
+      window.location.reload()
     });
 
     // Reset the form after submission
