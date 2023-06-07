@@ -1,30 +1,59 @@
-import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 
-const EditNote = (props) => {
+import React, { useState, useEffect } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { useSelector, useDispatch, } from "react-redux";
+import { useParams , useNavigate} from "react-router-dom";
+import { editNotes, fetchNotes } from "../store/api/NoteSlice";
+
+const EditNote = () => {
+  const dispatch = useDispatch();
+  const [currentNote, setCurrentNote] = useState({});
+  const params = useParams();
+  const navigate = useNavigate()
+  const notes = useSelector((state) => state.note.notes);
+  console.log(notes);
   const initialValues = {
-    title: props.initialValues.title,
-    content: props.initialValues.content,
+    title: currentNote.title,
+    content: currentNote.content,
   };
 
+  useEffect(() => {
+    dispatch(fetchNotes());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // console.log(note);
+    if (notes.length) {
+      const note = notes.find((note) => note.id === Number(params.id));
+      setCurrentNote(note);
+    }
+  }, [notes, params.id]);
+
   const validationSchema = Yup.object({
-    title: Yup.string().required('Title is required'),
-    content: Yup.string().required('Content is required'),
+    title: Yup.string().required("Title is required"),
+    content: Yup.string().required("Content is required"),
   });
 
-  const handleSubmit = (values, { resetForm }) => {
-    // Send the data to the server (localhost:9000/update_note)
-    console.log('Sending data:', values);
-    props.editNote(values);
+  const handleSubmit = (values) => {
+    dispatch(
+      editNotes({
+        id: Number(params.id),
+        values: values,
+      })   
+    ).then((resp) => {
+      window.location.reload(resp)
+      navigate("/");
+    });
 
-    // Reset the form after submission
-    resetForm();
+    console.log(params);
+
   };
 
   return (
     <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
       <Formik
+        //  enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -44,6 +73,7 @@ const EditNote = (props) => {
           <div className="mb-5">
             <Field
               as="textarea"
+              id="content"
               name="content"
               placeholder="Body"
               className="border border-gray-300 shadow p-3 w-full rounded mb-"

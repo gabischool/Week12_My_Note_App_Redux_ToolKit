@@ -1,29 +1,35 @@
-import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 
-const AddNote = (props) => {
+
+// second
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { addNotes } from "../store/api/NoteSlice";
+import { useNavigate } from "react-router-dom";
+const AddNote = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
   const initialValues = {
-    title: '',
-    content: '',
+    title: "",
+    content: "",
   };
 
   const validationSchema = Yup.object({
-    title: Yup.string().required('Title is required'),
-    content: Yup.string().required('Content is required'),
+    title: Yup.string().required("Title is required"),
+    content: Yup.string().required("Content is required"),
   });
 
-  const handleSubmit = (values, { resetForm }) => {
-    // Send the data to the server (localhost:9000/create_note)
-    console.log('Sending data:', values);
- 
-      props.createNote({
-        title: values.title,
-        content: values.content,
-      });
+  const handleSubmit = (values) => {
+  
+    dispatch(addNotes({
+      title: values.title,
+      content: values.content,
+    })).then(() => {
 
-    // Reset the form after submission
-    resetForm();
+   navigate("/");
+        
+    });
   };
 
   return (
@@ -48,6 +54,7 @@ const AddNote = (props) => {
           <div className="mb-5">
             <Field
               as="textarea"
+              id="content"
               name="content"
               placeholder="Body"
               className="border border-gray-300 shadow p-3 w-full rounded mb-"
