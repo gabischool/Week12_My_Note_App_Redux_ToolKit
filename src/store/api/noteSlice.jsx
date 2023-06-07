@@ -7,28 +7,24 @@ const initialState = {
     error: null
 }
 
-// fetch notes 
 export const fetchNotes = createAsyncThunk("notes/fetchNotes", async () => {
-    const response = await axios.get("http://localhost:9000/notes");
+    const response = await axios.get("http://localhost:9003/notes");
     return response.data
 });
 
-// add note 
 export const addNote = createAsyncThunk("create_note/addNote", async (newNote) => {
-    const response = await axios.post("http://localhost:9000/create_note", newNote);
+    const response = await axios.post("http://localhost:9003/create_note", newNote);
     return response.data
 });
 
-// edit note
-export const editNote = createAsyncThunk("notes/editNote", async ({noteId, updatedNote}) => {
-    const response = await axios.put(`http://localhost:9000/update_note/${noteId}`, updatedNote);
+export const editNote = createAsyncThunk("notes/editNote", async ({noteID, updatedNote}) => {
+    const response = await axios.put(`http://localhost:9003/update_note/${noteID}`, updatedNote);
     return response.data
 });
 
-// delete note 
-export const deleteNote = createAsyncThunk("notes/deleteNote", async (noteId) => {
-    await axios.delete(`http://localhost:9000/delete_note/${noteId}`)
-    return noteId
+export const deleteNote = createAsyncThunk("notes/deleteNote", async (noteID) => {
+    await axios.delete(`http://localhost:9003/delete_note/${noteID}`)
+    return noteID
 });
 
 export const noteSlice = createSlice({
@@ -51,16 +47,16 @@ export const noteSlice = createSlice({
             state.notes.push(action.payload);
         })
         .addCase(editNote.fulfilled, (state, action) => {
-            const {noteId, updatedNote} = action.payload;
-            const existingNote = state.notes.find((note) => note.id === noteId);
+            const {noteID, updatedNote} = action.payload;
+            const existingNote = state.notes.find((note) => note.id === noteID);
             if(existingNote) {
                 existingNote.title = updatedNote.title;
                 existingNote.content = updatedNote.content;
             }
         })
         .addCase(deleteNote.fulfilled, (state, action) => {
-            const noteId = action.payload;
-            state.notes = state.notes.filter((note) => note.id !== noteId)
+            const noteID = action.payload;
+            state.notes = state.notes.filter((note) => note.id !== noteID)
         })
     },
 });

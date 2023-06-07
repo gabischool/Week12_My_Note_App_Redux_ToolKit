@@ -10,27 +10,26 @@ const EditNote = () => {
   const navigate = useNavigate()
   const [currentNote, setCurrentNote] = useState({});
   
-  const initialValues = {
-    title: currentNote.title,
-    content: currentNote.content
-  };
-
 
   const params = useParams();
 
   const notes = useSelector((state) => state.note.notes);
-  // console.log("waa current Note" ,currentNote)
  
   useEffect(() => {
     dispatch(fetchNotes())
   }, [dispatch])
 
   useEffect(() => {
-    const note = notes.find((note) => note.id === Number(params.id))
-    if (note) {
-      setCurrentNote(note);
+    if(notes.length) {
+     const note = notes.find((note) => note.id === Number(params.id))
+     setCurrentNote(note);
     }
   }, [notes, params.id])
+
+  const initialValues = {
+    title: currentNote.title,
+    content: currentNote.content
+  };
   
   const validationSchema = Yup.object({
     title: Yup.string().required('Title is required'),
@@ -40,7 +39,7 @@ const EditNote = () => {
   const handleSubmit = (values, { resetForm }) => {
     dispatch(
       editNote({
-      noteId: Number(params.id),
+      noteID: Number(params.id),
       updatedNote: values
     })
     ).then(() => {
@@ -48,13 +47,13 @@ const EditNote = () => {
       window.location.reload()
     });
 
-    // Reset the form after submission
     resetForm();
   };
 
   return (
     <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
       <Formik
+        enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}

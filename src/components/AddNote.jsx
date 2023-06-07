@@ -18,14 +18,11 @@ const AddNote = () => {
   });
 
   const handleSubmit = (values, { resetForm }) => {
-    // Send the data to the server (localhost:9000/create_note)
-    // console.log('Sending data:', values);
     dispatch(addNote({
       title: values.title,
       content: values.content
     }))
 
-    // Reset the form after submission
     resetForm();
   };
 
