@@ -1,30 +1,73 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchNote, updateNote } from '../store/api/NoteSlice';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const EditNote = (props) => {
+const EditNote = () => {
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
+  const [currenValue, setCurrentValue] = useState([]);
+
+  const params = useParams();
+
+  const selectedNote = useSelector((state) => state.note.notes);
+
+  useEffect(() => {
+
+    dispatch(fetchNote())
+
+  }, [dispatch])
+
+
+  useEffect(()=>{
+
+    const note = selectedNote.find(note => note.id === Number(params.id));
+
+    if(note){
+      setCurrentValue(note)
+    }
+  },[selectedNote , params.id])
+
+
   const initialValues = {
-    title: props.initialValues.title,
-    content: props.initialValues.content,
+
+    title: currenValue.title,
+    content: currenValue.content,
+
   };
+
 
   const validationSchema = Yup.object({
+
     title: Yup.string().required('Title is required'),
     content: Yup.string().required('Content is required'),
+
   });
 
-  const handleSubmit = (values, { resetForm }) => {
-    // Send the data to the server (localhost:9000/update_note)
-    console.log('Sending data:', values);
-    props.editNote(values);
 
-    // Reset the form after submission
+
+  const handleSubmit = (values, { resetForm }) => {
+    dispatch(updateNote({
+      id: Number(params.id),
+      values: values
+    })).then(res=>{
+      window.location.reload(res);
+      navigate("/");
+    })
     resetForm();
+
   };
 
+
+
   return (
-    <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
+    <div className=" p-10 shadow-inner w-full bg-white lg:w-[93%] mx-auto ">
       <Formik
+        enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -35,7 +78,7 @@ const EditNote = (props) => {
               type="text"
               id="title"
               name="title"
-              placeholder="Title"
+              placeholder="title"
               className="border border-gray-300 shadow p-3 w-full rounded mb-"
             />
             <ErrorMessage name="title" component="div" className="text-red-500" />
@@ -45,7 +88,7 @@ const EditNote = (props) => {
             <Field
               as="textarea"
               name="content"
-              placeholder="Body"
+              placeholder="body"
               className="border border-gray-300 shadow p-3 w-full rounded mb-"
             />
             <ErrorMessage name="content" component="div" className="text-red-500" />
@@ -53,7 +96,7 @@ const EditNote = (props) => {
 
           <button
             type="submit"
-            className="block w-full bg-yellow-400 text-black font-bold p-4 rounded-lg hover:bg-yellow-500"
+            className="block w-full bg-yellow-400 text-white font-bold p-4 rounded-lg hover:bg-yellow-500"
           >
             Update Note
           </button>

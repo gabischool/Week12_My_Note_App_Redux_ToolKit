@@ -1,8 +1,9 @@
-import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
-
-const AddNote = (props) => {
+import { addNote } from '../store/api/NoteSlice';
+const AddNote = () => {
+  const dispatch = useDispatch();
   const initialValues = {
     title: '',
     content: '',
@@ -13,21 +14,18 @@ const AddNote = (props) => {
     content: Yup.string().required('Content is required'),
   });
 
-  const handleSubmit = (values, { resetForm }) => {
+  const handleSubmit = (values) => {
     // Send the data to the server (localhost:9000/create_note)
     console.log('Sending data:', values);
- 
-      props.createNote({
-        title: values.title,
-        content: values.content,
-      });
+    dispatch(addNote(values));
 
     // Reset the form after submission
-    resetForm();
+    // resetForm();
+    // { resetForm }
   };
 
   return (
-    <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
+    <div className="p-10 shadow-inner w-full bg-white lg:w-[93%] mx-auto ">
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -40,7 +38,7 @@ const AddNote = (props) => {
               id="title"
               name="title"
               placeholder="Title"
-              className="border border-gray-300 shadow p-3 w-full rounded mb-"
+              className="border border-gray-300 shadow p-3 w-full rounded"
             />
             <ErrorMessage name="title" component="div" className="text-red-500" />
           </div>
@@ -50,14 +48,14 @@ const AddNote = (props) => {
               as="textarea"
               name="content"
               placeholder="Body"
-              className="border border-gray-300 shadow p-3 w-full rounded mb-"
+              className="border border-gray-300 shadow p-3 w-full rounded"
             />
             <ErrorMessage name="content" component="div" className="text-red-500" />
           </div>
 
           <button
             type="submit"
-            className="block w-full bg-yellow-400 text-black font-bold p-4 rounded-lg hover:bg-yellow-500"
+            className="block w-full bg-yellow-400 text-white font-bold p-4 rounded-lg hover:bg-yellow-500"
           >
             Add Note
           </button>
