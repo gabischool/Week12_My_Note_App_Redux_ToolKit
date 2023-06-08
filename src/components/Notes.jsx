@@ -15,7 +15,9 @@ function Notes() {
   }, [dispatch]);
 
   const handleDelete = (noteId) => {
-    dispatch(deleteNote(noteId))
+    if(window.confirm("Are you sure want to delete ?")) {
+     dispatch(deleteNote(noteId))
+    }
   }
 
   return (
