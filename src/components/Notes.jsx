@@ -1,28 +1,41 @@
-/* eslint-disable react/prop-types */
-
-import React from "react";
+import { useEffect } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-
-function Notes(props) {
+import { useDispatch, useSelector } from "react-redux";
+import { deleteNote, fetchNote } from "../store/api/NoteSlice";
+import { Link } from "react-router-dom";
+function Notes() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchNote());
+  }, [dispatch]);
+  const allNotes = useSelector((state) => state.note.notes);
+  const handleDelete = (noteId) => {
+    const CheckingUserDescistion = window.confirm(
+      "are you sure you want to delete this note"
+    );
+    if (CheckingUserDescistion) {
+      dispatch(deleteNote(noteId));
+    }
+  };
   return (
-    <div className="flex flex-wrap justify-center mt-5">
-      {props.notes.map((note) => (
+    <div className=" grid grid-cols-2  lg:grid-cols-3 gap-5 mt-5  p-10 w-[70%]">
+      {allNotes.map((note) => (
         <div
-          className="relative bg-yellow-400 w-64 h-64 m-5 shadow-2xl overflow-hidden"
+          className="p-4 rounded bg-yellow-500 relative"
           key={note.id}
-        >
-          <div className="p-5">
-            <h3 className="font-bold text-2xl mb-4">{note.title}</h3>
-            <p>{note.content}</p>
-          </div>
-          <div className="absolute bg-yellow-400 w-12 h-12 rotate-45 -top-6 -left-6" />
-          <div className="absolute bottom-0 left-0 right-0 flex justify-center p-4">
-            <button className="mr-2">
-              <FaEdit size={20} onClick={() => props.handleEdit(note.id, note)} />
-            </button>
-            <button>
-              <FaTrash size={20} onClick={() => props.deleteNote(note.id)} />
-            </button>
+          id="box-note">
+          <h1 className="text-[#fff] font-bold">{note.title}</h1>
+          <p className="text-white text-left pb-3 overflow-hidden">
+            {note.content}
+          </p>
+          <div className="w-full flex justify-between items-center text-[#fff] ">
+            <Link to={`/EditNote/${note.id}`}>
+              <FaEdit className="cursor-pointer" />
+            </Link>
+            <FaTrash
+              onClick={() => handleDelete(note.id)}
+              className="cursor-pointer "
+            />
           </div>
         </div>
       ))}
