@@ -1,12 +1,21 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { AddNotes } from '../store/api/noteslice';
+import { useNavigate } from "react-router-dom";
 
-const AddNote = (props) => {
+
+
+const AddNote=()=>{ 
+const dispatch = useDispatch();
+const navigate = useNavigate();
+// const AddNote = (props) => {
   const initialValues = {
     title: '',
     content: '',
   };
+   
 
   const validationSchema = Yup.object({
     title: Yup.string().required('Title is required'),
@@ -15,20 +24,28 @@ const AddNote = (props) => {
 
   const handleSubmit = (values, { resetForm }) => {
     // Send the data to the server (localhost:9000/create_note)
-    console.log('Sending data:', values);
- 
-      props.createNote({
-        title: values.title,
-        content: values.content,
+    // console.log('Sending data:', values);
+
+    dispatch(AddNotes(values))
+    .then(() => {
+            navigate("/")
       });
+  
+ 
+      // props.createNote({
+      //   title: values.title,
+      //   conte nt: values.content,
+       
+       
+      resetForm();
 
     // Reset the form after submission
-    resetForm();
-  };
-
+      };
+  
   return (
     <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
       <Formik
+         
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
