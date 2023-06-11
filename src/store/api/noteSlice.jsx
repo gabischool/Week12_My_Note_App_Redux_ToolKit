@@ -47,11 +47,11 @@ export const noteSlice = createSlice({
             state.notes.push(action.payload);
         })
         .addCase(editNote.fulfilled, (state, action) => {
-            const {noteID, updatedNote} = action.payload;
-            const existingNote = state.notes.find((note) => note.id === noteID);
+            const {id, title, content} = action.payload;
+            const existingNote = state.notes.find((note) => note.id === Number(id));
             if(existingNote) {
-                existingNote.title = updatedNote.title;
-                existingNote.content = updatedNote.content;
+                existingNote.title = title;
+                existingNote.content = content;
             }
         })
         .addCase(deleteNote.fulfilled, (state, action) => {
