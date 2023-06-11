@@ -2,11 +2,28 @@
 
 import React from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import  {useEffect} from "react";
+import { fetchNotes, deleteNote } from "../store/api/NoteSlice";
 
-function Notes(props) {
+function Notes() {
+
+const dispatch = useDispatch();
+const notes = useSelector((state) => state.note.notes);
+
+useEffect(() => {
+  dispatch(fetchNotes());
+}, [dispatch]);
+
+  
+const handleDelete = (id) => {
+  dispatch(deleteNote(id))
+ };
+
+
   return (
     <div className="flex flex-wrap justify-center mt-5">
-      {props.notes.map((note) => (
+      {notes.map((note) => (
         <div
           className="relative bg-yellow-400 w-64 h-64 m-5 shadow-2xl overflow-hidden"
           key={note.id}
@@ -21,7 +38,7 @@ function Notes(props) {
               <FaEdit size={20} onClick={() => props.handleEdit(note.id, note)} />
             </button>
             <button>
-              <FaTrash size={20} onClick={() => props.deleteNote(note.id)} />
+              <FaTrash size={20} onClick={() => handleDelete(note.id)} />
             </button>
           </div>
         </div>
