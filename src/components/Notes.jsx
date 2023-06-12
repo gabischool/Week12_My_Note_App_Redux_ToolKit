@@ -5,7 +5,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import  {useEffect} from "react";
 import { fetchNotes, deleteNote } from "../store/api/NoteSlice";
-
+import { Link } from "react-router-dom";
 function Notes() {
 
 const dispatch = useDispatch();
@@ -34,9 +34,9 @@ const handleDelete = (id) => {
           </div>
           <div className="absolute bg-yellow-400 w-12 h-12 rotate-45 -top-6 -left-6" />
           <div className="absolute bottom-0 left-0 right-0 flex justify-center p-4">
-            <button className="mr-2">
-              <FaEdit size={20} onClick={() => props.handleEdit(note.id, note)} />
-            </button>
+          <Link to={`edit_note/${note.id}`}>
+                <FaEdit size={20} />
+          </Link>
             <button>
               <FaTrash size={20} onClick={() => handleDelete(note.id)} />
             </button>
