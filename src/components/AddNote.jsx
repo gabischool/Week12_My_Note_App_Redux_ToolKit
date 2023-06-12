@@ -52,7 +52,7 @@ const AddNote = () => {
           </div>
 
           <div className="mb-5">
-            <Field
+            <div
               as="textarea"
               name="content"
               placeholder="Body"
