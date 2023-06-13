@@ -1,8 +1,13 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { addNote } from '../store/api/NoteSlice';
 
-const AddNote = (props) => {
+const AddNote = () => {
+
+  const dispatch = useDispatch();
+
   const initialValues = {
     title: '',
     content: '',
@@ -13,18 +18,19 @@ const AddNote = (props) => {
     content: Yup.string().required('Content is required'),
   });
 
-  const handleSubmit = (values, { resetForm }) => {
-    // Send the data to the server (localhost:9000/create_note)
-    console.log('Sending data:', values);
- 
-      props.createNote({
-        title: values.title,
-        content: values.content,
-      });
+  const handleSubmit = (values) => {
+    dispatch(addNote({
 
-    // Reset the form after submission
-    resetForm();
+      title: values.title,
+      content: values.content,
+    }))
+
+
+
   };
+
+
+
 
   return (
     <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
@@ -32,6 +38,7 @@ const AddNote = (props) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
+        enableReinitialize
       >
         <Form>
           <div className="mb-5">
@@ -46,12 +53,13 @@ const AddNote = (props) => {
           </div>
 
           <div className="mb-5">
-            <Field
+            
+              <Field
               as="textarea"
               name="content"
               placeholder="Body"
               className="border border-gray-300 shadow p-3 w-full rounded mb-"
-            />
+             />
             <ErrorMessage name="content" component="div" className="text-red-500" />
           </div>
 
