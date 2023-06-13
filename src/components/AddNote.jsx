@@ -38,6 +38,7 @@ const AddNote = () => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
+        enableReinitialize
       >
         <Form>
           <div className="mb-5">
@@ -52,12 +53,13 @@ const AddNote = () => {
           </div>
 
           <div className="mb-5">
-            <div
+            
+              <Field
               as="textarea"
               name="content"
               placeholder="Body"
               className="border border-gray-300 shadow p-3 w-full rounded mb-"
-            />
+             />
             <ErrorMessage name="content" component="div" className="text-red-500" />
           </div>
 
