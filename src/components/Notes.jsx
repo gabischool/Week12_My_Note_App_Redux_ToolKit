@@ -2,11 +2,24 @@
 
 import React from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { useGetNotesQuery, useDeleteNoteMutation } from "../features/api/apiSlice";
+
 
 function Notes(props) {
+
+  const {data: notes, isLoading, isSuccess, isError, error} = useGetNotesQuery();
+  const [deleteNote] = useDeleteNoteMutation();
+
+  let content;
+    if (isLoading) {
+        content = <p>Loading...</p>
+    }else if(isError){
+      content = <p>{error} somthing went wrong</p>
+    }
+       
   return (
     <div className="flex flex-wrap justify-center mt-5">
-      {props.notes.map((note) => (
+      {notes?.map((note) => (
         <div
           className="relative bg-yellow-400 w-64 h-64 m-5 shadow-2xl overflow-hidden"
           key={note.id}
@@ -21,13 +34,14 @@ function Notes(props) {
               <FaEdit size={20} onClick={() => props.handleEdit(note.id, note)} />
             </button>
             <button>
-              <FaTrash size={20} onClick={() => props.deleteNote(note.id)} />
+              <FaTrash size={20} onClick={() => deleteNote(note.id)} />
             </button>
           </div>
         </div>
       ))}
     </div>
   );
-}
+      
 
+}
 export default Notes;

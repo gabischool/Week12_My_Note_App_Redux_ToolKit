@@ -1,26 +1,36 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useUpdateNoteMutation } from "../features/api/apiSlice";
 
-const EditNote = (props) => {
+const EditNote = ({initialValue}) => {
+
+  const [updateNote] = useUpdateNoteMutation();
+
   const initialValues = {
-    title: props.initialValues.title,
-    content: props.initialValues.content,
-  };
+    title: initialValue.title,
+    content: initialValue.content,
 
+  
+  };
+ 
   const validationSchema = Yup.object({
     title: Yup.string().required('Title is required'),
     content: Yup.string().required('Content is required'),
-  });
+  }); 
 
-  const handleSubmit = (values, { resetForm }) => {
+  const handleSubmit = async (values, { resetForm }) => {
     // Send the data to the server (localhost:9000/update_note)
     console.log('Sending data:', values);
-    props.editNote(values);
+
+    await updateNote({id: initialValue.id, note: values});
+  
+    
 
     // Reset the form after submission
     resetForm();
   };
+   //dispatch(edidNote({noteId: initialValue.id,  updatedNote: values} ))
 
   return (
     <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">

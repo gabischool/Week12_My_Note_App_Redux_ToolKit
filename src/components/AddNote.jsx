@@ -1,8 +1,14 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useAddNoteMutation } from "../features/api/apiSlice";
 
-const AddNote = (props) => {
+
+
+const AddNote = () => {
+
+  const [addNote] = useAddNoteMutation();
+
   const initialValues = {
     title: '',
     content: '',
@@ -15,12 +21,16 @@ const AddNote = (props) => {
 
   const handleSubmit = (values, { resetForm }) => {
     // Send the data to the server (localhost:9000/create_note)
-    console.log('Sending data:', values);
+    //console.log('Sending data:', values);
+    addNote({title: values.title,
+        content: values.content})
+
+    
  
-      props.createNote({
-        title: values.title,
-        content: values.content,
-      });
+      // props.createNote({
+      //   title: values.title,
+      //   content: values.content,
+      // });
 
     // Reset the form after submission
     resetForm();
