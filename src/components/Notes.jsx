@@ -1,9 +1,26 @@
 /* eslint-disable react/prop-types */
 
 import React from "react";
+import { useEffect } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteNote, fetchNotes } from "../store/api/NoteSlice";
+import { Link } from "react-router-dom";
 
-function Notes(props) {
+function Notes() {
+  const notes = useSelector((state) => state.note.notes);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchNotes())
+  }, [dispatch]);
+
+  const handleDelete = (noteId) => {
+    if(window.confirm("Are you sure want to delete ?")) {
+     dispatch(deleteNote(noteId))
+    }
+  }
+  
   return (
     <div className="flex flex-wrap justify-center mt-5">
       {props.notes.map((note) => (
