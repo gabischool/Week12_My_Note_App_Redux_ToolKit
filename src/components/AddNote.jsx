@@ -1,31 +1,25 @@
-import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { addnote } from "../store/api/NoteSlice";
 
-const AddNote = (props) => {
+const AddNote = () => {
+  const dispatch = useDispatch();
+
   const initialValues = {
-    title: '',
-    content: '',
+    title: "",
+    content: "",
   };
 
   const validationSchema = Yup.object({
-    title: Yup.string().required('Title is required'),
-    content: Yup.string().required('Content is required'),
+    title: Yup.string().required("Title is required"),
+    content: Yup.string().required("Content is required"),
   });
 
   const handleSubmit = (values, { resetForm }) => {
-    // Send the data to the server (localhost:9000/create_note)
-    console.log('Sending data:', values);
- 
-      props.createNote({
-        title: values.title,
-        content: values.content,
-      });
-
-    // Reset the form after submission
+    dispatch(addnote(values));
     resetForm();
   };
-
   return (
     <div className="bg-white p-10 rounded-lg shadow md:w-3/4 mx-auto lg:w-1/2">
       <Formik
@@ -42,7 +36,11 @@ const AddNote = (props) => {
               placeholder="Title"
               className="border border-gray-300 shadow p-3 w-full rounded mb-"
             />
-            <ErrorMessage name="title" component="div" className="text-red-500" />
+            <ErrorMessage
+              name="title"
+              component="div"
+              className="text-red-500"
+            />
           </div>
 
           <div className="mb-5">
@@ -52,7 +50,11 @@ const AddNote = (props) => {
               placeholder="Body"
               className="border border-gray-300 shadow p-3 w-full rounded mb-"
             />
-            <ErrorMessage name="content" component="div" className="text-red-500" />
+            <ErrorMessage
+              name="content"
+              component="div"
+              className="text-red-500"
+            />
           </div>
 
           <button
